@@ -1,3 +1,7 @@
+import Crypto from 'node:crypto';
+if (!globalThis.crypto) {
+	globalThis.crypto = Crypto;
+}
 import { describe, test, expect } from 'vitest';
 import { sign, unsign } from './crypto.js';
 
