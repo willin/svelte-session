@@ -10,11 +10,10 @@ Sessions are an important part of websites that allow the server to identify req
 
 Svelte-Session comes with several pre-built session storage options for common scenarios, and one to create your own:
 
-- custom storage with `createSessionStorage`
-- `createCookieSessionStorage`
-- `createMemorySessionStorage`
-- `createFileSessionStorage` (node)
-- `createWorkersKVSessionStorage` (Cloudflare Workers)
+- custom storage with `createCustomStrategy`
+- `CookieSessionStrategy`
+- `MemoryStrategy`
+- `CloudflareKVStrategy` (Cloudflare Workers)
 
 ## Installation
 
@@ -25,74 +24,6 @@ npm install @svelte-dev/session
 ```
 
 ## Usage
-
-```ts
-import { createCookieSessionStorage } from '@svelte-dev/session';
-
-type SessionData = {
-	userId: string;
-};
-
-type SessionFlashData = {
-	error: string;
-};
-
-const { getSession } = createCookieSessionStorage<SessionData, SessionFlashData>({
-	// a Cookie from `createCookie` or the CookieOptions to create one
-	cookie: {
-		name: '__session',
-
-		// all of these are optional
-		domain: 'svelte.dev',
-		// Expires can also be set (although maxAge overrides it when used in combination).
-		// Note that this method is NOT recommended as `new Date` creates only one date on each server deployment, not a dynamic date in the future!
-		//
-		// expires: new Date(Date.now() + 60_000),
-		httpOnly: true,
-		maxAge: 60,
-		path: '/',
-		sameSite: 'lax',
-		secrets: ['s3cret1'],
-		secure: true
-	}
-});
-
-export { getSession };
-```
-
-You'll use methods to get access to sessions in your `loader` and `action` functions.
-
-Might look something like this:
-
-```ts
-import { getSession } from '../sessions';
-
-export const handle: Handle = async ({ event, resolve }) => {
-	const session = await getSession(event.cookies);
-
-	// Example 1: Check Session key
-	if (!session.has('userId')) {
-		// Redirect to the login page if they are not signed in.
-		return redirect('/login');
-	}
-
-	// Example 2: Get Session
-	const user = session.get('user');
-	event.locals.user = user;
-
-	// Example 3: Flash messages
-	session.flash('error', 'Invalid username/password');
-
-	// Example 4: Save the session (Required when changing)
-	await session.commit();
-
-	// Example 5: Destroy the session
-	await session.destroy();
-
-	const response = await resolve(event);
-	return response;
-};
-```
 
 ## Advanced Usage
 

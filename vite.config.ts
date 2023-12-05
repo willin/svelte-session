@@ -13,6 +13,7 @@ export default defineConfig({
 			include: ['src/lib/**/*.{js,ts}'],
 			exclude: [
 				'**/session/utils.ts',
+				'**/session/handler.ts',
 				'**/types/**',
 				'**/hooks.server.ts',
 				'**/index.ts',

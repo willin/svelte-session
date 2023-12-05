@@ -1,27 +1,11 @@
-/**
- * @protected An object of name/value pairs to be used in the session.
- */
-export type SessionData = {
-	[name: string]: unknown;
-};
-
-type FlashDataKey<Key extends string> = `__flash_${Key}__`;
-
-/**
- * @protected
- */
-export type FlashSessionData<Data, FlashData> = Partial<
-	Data & {
-		[Key in keyof FlashData as FlashDataKey<Key & string>]: FlashData[Key];
-	}
->;
+import type { FlashDataKey, FlashSessionData, SessionData } from './types.js';
 
 function flashKey<Key extends string>(name: Key): FlashDataKey<Key> {
 	return `__flash_${name}__`;
 }
 
 /**
- * Session persists data across HTTP requests.
+ * @private Session persists data across HTTP requests.
  */
 export class Session<Data = SessionData, FlashData = Data> {
 	readonly #id: string;

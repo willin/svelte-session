@@ -1,10 +1,5 @@
 import type { SignFunction, UnsignFunction } from './crypto.js';
 
-/**
- * @private
- */
-export type ImplementsOrExtends<L, R> = R & Pick<L, Exclude<keyof L, keyof R>>;
-
 function encodeData(value: unknown): string {
 	return btoa(myUnescape(encodeURIComponent(JSON.stringify(value))));
 }
@@ -88,21 +83,21 @@ export async function encodeCookieValue(
 	return encoded;
 }
 
-export async function decodeCookieValue(
+export async function decodeCookieValue<T>(
 	unsign: UnsignFunction,
 	value: string,
 	secrets: string[]
-): Promise<unknown> {
+): Promise<T> {
 	if (secrets.length > 0) {
 		for (const secret of secrets) {
 			const unsignedValue = await unsign(value, secret);
 			if (unsignedValue !== false) {
-				return decodeData(unsignedValue);
+				return decodeData(unsignedValue) as T;
 			}
 		}
 
-		return null;
+		return {} as T;
 	}
 
-	return decodeData(value);
+	return decodeData(value) as T;
 }
