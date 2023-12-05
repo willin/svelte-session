@@ -1,9 +1,3 @@
-import Crypto from 'node:crypto';
-if (!globalThis.crypto) {
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore
-	globalThis.crypto = Crypto;
-}
 import { describe, test, expect } from 'vitest';
 import { sign, unsign } from './crypto.js';
 

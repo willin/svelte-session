@@ -5,6 +5,8 @@ export default defineConfig({
 	plugins: [sveltekit()],
 	test: {
 		include: ['src/lib/**/*.{test,spec}.{js,ts}'],
+		globals: true,
+		setupFiles: ['./test/global-setup.ts'],
 		coverage: {
 			provider: 'istanbul',
 			reporter: ['text', 'json', 'html', 'lcov'],

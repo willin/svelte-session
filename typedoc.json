@@ -14,8 +14,9 @@
 		"NPM": "https://npmjs.com/package/@svelte-dev/session",
 		"Willin": "https://willin.wang"
 	},
-	"plugin": ["typedoc-plugin-extras", "typedoc-plugin-keywords"],
+	"plugin": ["typedoc-plugin-extras", "typedoc-plugin-keywords", "typedoc-plugin-google-ads"],
 	"theme": "default",
+	"googleAdsId": "ca-pub-5059418763237956",
 	"name": "@svelet-dev/session",
 	"customTitle": "@svelet-dev/session",
 	"customDescription": "Simple Session Storage Management for Svelte",
