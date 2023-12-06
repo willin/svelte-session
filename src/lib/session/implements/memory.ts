@@ -23,10 +23,10 @@ export class MemoryStrategy<Data = SessionData, FlashData = Data>
 	/**
 	 * Creates a new record with the given data and returns the session id.
 	 */
-	async createData(data, expires?: Date, id?: string): Promise<string> {
-		const key = id ?? Math.random().toString(36).substring(2, 10);
-		map.set(key, { data, expires });
-		return key;
+	async createData(data, expires?: Date): Promise<string> {
+		const id = Math.random().toString(36).substring(2, 10);
+		map.set(id, { data, expires });
+		return id;
 	}
 
 	/**

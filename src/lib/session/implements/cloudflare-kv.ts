@@ -8,11 +8,14 @@ import type { RequestEvent } from '@sveltejs/kit';
  * The advantage of using this instead of cookie session storage is that
  * KV Store may contain much more data than cookies.
  */
-export class CloudflareKVStrategy<Data = SessionData, FlashData = Data>
-	implements SessionStorageStrategy<Data, FlashData>
+export class CloudflareKVStrategy<
+	Data = SessionData,
+	FlashData = Data,
+	CustomOptions = { namespace: string }
+> implements SessionStorageStrategy<Data, FlashData>
 {
 	#kv: KVNamespace;
-	constructor(event: RequestEvent, options) {
+	constructor(event: RequestEvent, options: CustomOptions) {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
 		this.#kv = event.platform?.env?.[options?.namespace ?? 'CACHE'];
@@ -20,13 +23,7 @@ export class CloudflareKVStrategy<Data = SessionData, FlashData = Data>
 	/**
 	 * Creates a new record with the given data and returns the session id.
 	 */
-	async createData(data, expires?: Date, id?: string): Promise<string> {
-		if (id) {
-			await this.#kv.put(id, JSON.stringify(data), {
-				expiration: expires ? Math.round(expires.getTime() / 1000) : undefined
-			});
-			return id;
-		}
+	async createData(data, expires?: Date): Promise<string> {
 		// eslint-disable-next-line no-constant-condition
 		while (true) {
 			const randomBytes = new Uint8Array(8);

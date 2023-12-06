@@ -12,9 +12,10 @@ Simple Session Storage Management for [Svlelte](https://svelte.dev/).
   - [Installation](#installation)
   - [Usage](#usage)
   - [Advanced Usage](#advanced-usage)
-    - [Gotchas](#gotchas)
     - [Session API](#session-api)
+    - [Cloudflare KV](#cloudflare-kv)
     - [Typescript](#typescript)
+    - [Create your own stragety](#create-your-own-stragety)
   - [赞助 Sponsor](#赞助-sponsor)
   - [许可证 License](#许可证-license)
 
@@ -48,7 +49,10 @@ import { handleSession } from '@svelte-dev/session';
 
 export const handle = handleSession({
 	adapter: {
-		name: 'cookie'
+		name: 'cookie',
+		options: {
+			chunk: true
+		}
 	},
 	session: {
 		key: '__sid',
@@ -63,11 +67,60 @@ export const handle = handleSession({
 });
 ```
 
+Load Data from `+page.server.ts`:
+
+```ts
+import type { ServerLoad } from '@sveltejs/kit';
+
+export const load: ServerLoad = async ({ locals }) => {
+	const views = locals.session.get('views') ?? 0;
+	await locals.session.set('views', views + 1);
+	return {};
+};
+```
+
+Use in `svelte5` runes component:
+
+```svelte
+<script>
+	let { data } = $props();
+</script>
+
+<pre>
+  {JSON.stringify(data, null, 2)}
+</pre>
+```
+
 ## Advanced Usage
 
-### Gotchas
-
 ### Session API
+
+See: <https://svelte-session.js.cool/> For more details
+
+### Cloudflare KV
+
+Init from `hooks.server.ts`:
+
+```ts
+import { handleSession } from '@svelte-dev/session';
+
+export const handle = handleSession({
+	adapter: {
+		name: 'cloudflare-kv',
+		options: {
+			namespace: 'SESSION'
+		}
+	},
+	session: {
+		secrets: ['s3cr3t']
+	},
+	cookie: {
+		path: '/'
+	}
+});
+```
+
+Checkout the docs for more details: <https://kit.svelte.dev/docs/adapter-cloudflare#bindings>
 
 ### Typescript
 
@@ -88,6 +141,58 @@ declare global {
 		interface Session extends SessionStorage {}
 		// interface Platform {}
 	}
+}
+```
+
+### Create your own stragety
+
+```ts
+import type { RequestEvent } from '@sveltejs/kit';
+import type {
+	CookieOptions,
+	FlashSessionData,
+	SessionData,
+	SessionOptions,
+	SessionStorageStrategy
+} from '@svelte-dev/session';
+
+export type YourStrageOptions = {
+	/**
+	 * Example
+	 */
+	key?: string;
+};
+
+export class YourStrategy<Data = SessionData, FlashData = Data>
+	implements SessionStorageStrategy<Data, FlashData>
+{
+	constructor(
+		event: RequestEvent,
+		options: YourStrageOptions & { cookie: CookieOptions; session: SessionOptions }
+	) {}
+	/**
+	 * Creates a new record with the given data and returns the session id.
+	 */
+	async createData(data, expires?: Date): Promise<string> {}
+
+	/**
+	 * Returns data for a given session id, or `null` if there isn't any.
+	 */
+	async readData(id: string): Promise<FlashSessionData<Data, FlashData> | null> {}
+
+	/**
+	 * Updates data for the given session id.
+	 */
+	async updateData(
+		id: string,
+		data: FlashSessionData<Data, FlashData>,
+		expires?: Date
+	): Promise<void> {}
+
+	/**
+	 * Deletes data for a given session id from the data store.
+	 */
+	async deleteData(id: string): Promise<void> {}
 }
 ```
 

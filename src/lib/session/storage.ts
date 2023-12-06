@@ -5,6 +5,7 @@ import { decodeCookieValue, encodeCookieValue } from './utils.js';
 import { sign, unsign } from './crypto.js';
 import { MemoryStrategy } from '$lib/index.js';
 import { CloudflareKVStrategy } from './implements/cloudflare-kv.js';
+import { CookieStrategy } from './implements/cookie.js';
 
 export class SessionStorage<Data = SessionData, FlashData = Data, CustomStrategyOptions = any> {
 	#options: Pick<
@@ -45,7 +46,7 @@ export class SessionStorage<Data = SessionData, FlashData = Data, CustomStrategy
 				}
 				case 'cookie':
 				default: {
-					this.#adapter = {} as SessionStorageStrategy<Data, FlashData>;
+					this.#adapter = new CookieStrategy(event, { ...rest, ...options } as any);
 				}
 			}
 		}
