@@ -7,18 +7,17 @@ Simple Session Storage Management for [Svlelte](https://svelte.dev/).
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [@svelte-dev/session](#svelte-devsession)
-  - [Overview](#overview)
-  - [Installation](#installation)
-  - [Usage](#usage)
-  - [Advanced Usage](#advanced-usage)
-    - [Session API](#session-api)
-    - [Cloudflare KV](#cloudflare-kv)
-    - [Custom Handler](#custom-handler)
-    - [Typescript](#typescript)
-    - [Create your own stragety](#create-your-own-stragety)
-  - [赞助 Sponsor](#赞助-sponsor)
-  - [许可证 License](#许可证-license)
+- [Overview](#overview)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Advanced Usage](#advanced-usage)
+  - [Session API](#session-api)
+  - [Cloudflare KV](#cloudflare-kv)
+  - [Custom Handler](#custom-handler)
+  - [Typescript](#typescript)
+  - [Create your own stragety](#create-your-own-stragety)
+- [赞助 Sponsor](#%E8%B5%9E%E5%8A%A9-sponsor)
+- [许可证 License](#%E8%AE%B8%E5%8F%AF%E8%AF%81-license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
