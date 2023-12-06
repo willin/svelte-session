@@ -1,3 +1,12 @@
+# 0.1.0 (2023-12-06)
+
+
+### Features
+
+* :tada: cookie strategy ([c8759bc](https://github.com/willin/svelte-session/commit/c8759bca6f4bee0d11a52f9f159bd9ccfa485b08))
+
+
+
 ## 0.0.1 (2023-12-05)
 
 
