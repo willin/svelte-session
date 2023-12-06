@@ -4,6 +4,7 @@ import { Session } from './session.js';
 import { decodeCookieValue, encodeCookieValue } from './utils.js';
 import { sign, unsign } from './crypto.js';
 import { MemoryStrategy } from '$lib/index.js';
+import { CloudflareKVStrategy } from './implements/cloudflare-kv.js';
 
 export class SessionStorage<Data = SessionData, FlashData = Data> {
 	#options: Pick<SessionStorageOptions, 'cookie' | 'session'>;
@@ -26,6 +27,10 @@ export class SessionStorage<Data = SessionData, FlashData = Data> {
 			switch (name) {
 				case 'memory': {
 					this.#adapter = new MemoryStrategy();
+					break;
+				}
+				case 'cloudflare-kv': {
+					this.#adapter = new CloudflareKVStrategy(options);
 					break;
 				}
 				case 'cookie':

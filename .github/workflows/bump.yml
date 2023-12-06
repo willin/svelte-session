@@ -27,6 +27,7 @@ jobs:
         run: |
           git config user.name 'Willin Wang'
           git config user.email 'willin@willin.org'
+      - run: npm install --force
       - name: bump version
         run: npm version ${{ github.event.inputs.version }}
       - name: Push latest version

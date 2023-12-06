@@ -4,6 +4,22 @@
 
 Simple Session Storage Management for [Svlelte](https://svelte.dev/).
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [@svelte-dev/session](#svelte-devsession)
+  - [Overview](#overview)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Advanced Usage](#advanced-usage)
+    - [Gotchas](#gotchas)
+    - [Session API](#session-api)
+    - [Typescript](#typescript)
+  - [赞助 Sponsor](#赞助-sponsor)
+  - [许可证 License](#许可证-license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Overview
 
 Sessions are an important part of websites that allow the server to identify requests coming from the same person, especially when it comes to server-side form validation or when JavaScript is not on the page. Sessions are a fundamental building block of many sites that let users "log in", including social, e-commerce, business, and educational websites.
@@ -25,11 +41,55 @@ npm install @svelte-dev/session
 
 ## Usage
 
+Init from `hooks.server.ts`:
+
+```ts
+import { handleSession } from '@svelte-dev/session';
+
+export const handle = handleSession({
+	adapter: {
+		name: 'cookie'
+	},
+	session: {
+		key: '__sid',
+		secrets: ['s3cr3t']
+	},
+	cookie: {
+		path: '/',
+		sameSite: 'lax',
+		secure: true,
+		httpOnly: true
+	}
+});
+```
+
 ## Advanced Usage
 
 ### Gotchas
 
 ### Session API
+
+### Typescript
+
+Here's a simple example, modify `app.d.ts`:
+
+```ts
+import type { FlashSessionData, SessionData, SessionStorage } from '@svelte-dev/session';
+
+declare global {
+	namespace App {
+		// interface Error {}
+		interface Locals {
+			session: SessionStorage<{ views: number }>;
+		}
+		interface PageData {
+			session: FlashSessionData<SessionData, SessionData>;
+		}
+		interface Session extends SessionStorage {}
+		// interface Platform {}
+	}
+}
+```
 
 ## 赞助 Sponsor
 
