@@ -13,7 +13,7 @@ declare global {
 			session: FlashSessionData<SessionData, SessionData>;
 		}
 		interface Session extends SessionStorage {}
-		// interface Platform {}
+		interface Platform {}
 	}
 }
 

@@ -1,5 +1,6 @@
 import type { KVNamespace } from '@cloudflare/workers-types';
 import type { FlashSessionData, SessionData, SessionStorageStrategy } from '../types.js';
+import type { RequestEvent } from '@sveltejs/kit';
 
 /**
  * Creates a SessionStorage that stores session data in the Clouldflare KV Store.
@@ -11,8 +12,10 @@ export class CloudflareKVStrategy<Data = SessionData, FlashData = Data>
 	implements SessionStorageStrategy<Data, FlashData>
 {
 	#kv: KVNamespace;
-	constructor(options: { kv: KVNamespace }) {
-		this.#kv = options.kv;
+	constructor(event: RequestEvent, options) {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		this.#kv = event.platform?.env?.[options?.namespace ?? 'CACHE'];
 	}
 	/**
 	 * Creates a new record with the given data and returns the session id.

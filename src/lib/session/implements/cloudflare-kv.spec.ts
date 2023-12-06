@@ -8,17 +8,27 @@ import { CloudflareKVStrategy } from './cloudflare-kv.js';
 describe(CloudflareKVStrategy, () => {
 	test('Create SessionStorage with Cloudflare KV', async () => {
 		const cookies = new Map<string, any>() as any as Cookies;
-		const s = new SessionStorage({ cookies } as RequestEvent, {
-			adapter: {
-				name: 'cloudflare-kv',
-				options: {
-					kv: new KVNamespace(new MemoryStorage())
+		const s = new SessionStorage(
+			{
+				cookies,
+				platform: {
+					env: {
+						kv: new KVNamespace(new MemoryStorage())
+					}
 				}
-			},
-			cookie: {
-				maxAge: 1000
+			} as any as RequestEvent,
+			{
+				adapter: {
+					name: 'cloudflare-kv',
+					options: {
+						namespace: 'kv'
+					}
+				},
+				cookie: {
+					maxAge: 1000
+				}
 			}
-		});
+		);
 		expect(s).toBeDefined();
 		// Throw before init
 		expect(() => s.sid).toThrowError();

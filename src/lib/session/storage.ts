@@ -6,8 +6,11 @@ import { sign, unsign } from './crypto.js';
 import { MemoryStrategy } from '$lib/index.js';
 import { CloudflareKVStrategy } from './implements/cloudflare-kv.js';
 
-export class SessionStorage<Data = SessionData, FlashData = Data> {
-	#options: Pick<SessionStorageOptions, 'cookie' | 'session'>;
+export class SessionStorage<Data = SessionData, FlashData = Data, CustomStrategyOptions = any> {
+	#options: Pick<
+		SessionStorageOptions<Data, FlashData, CustomStrategyOptions>,
+		'cookie' | 'session'
+	>;
 	#cookies: Cookies;
 	#session: Session<Data, FlashData> | null = null;
 	#adapter: SessionStorageStrategy<Data, FlashData>;
@@ -15,14 +18,21 @@ export class SessionStorage<Data = SessionData, FlashData = Data> {
 
 	constructor(
 		event: RequestEvent,
-		opts: SessionStorageOptions<Data, FlashData> = {} as SessionStorageOptions<Data, FlashData>
+		opts: SessionStorageOptions<
+			Data,
+			FlashData,
+			CustomStrategyOptions
+		> = {} as SessionStorageOptions<Data, FlashData, CustomStrategyOptions>
 	) {
 		const { adapter, ...rest } = opts;
 		this.#options = rest;
 		this.#cookies = event.cookies;
 		const { strategy: S, name = 'cookie', options = {} } = adapter ?? {};
 		if (S) {
-			this.#adapter = new S(options) as SessionStorageStrategy<Data, FlashData>;
+			this.#adapter = new S(event, { ...rest, ...options }) as SessionStorageStrategy<
+				Data,
+				FlashData
+			>;
 		} else {
 			switch (name) {
 				case 'memory': {
@@ -30,7 +40,7 @@ export class SessionStorage<Data = SessionData, FlashData = Data> {
 					break;
 				}
 				case 'cloudflare-kv': {
-					this.#adapter = new CloudflareKVStrategy(options);
+					this.#adapter = new CloudflareKVStrategy(event, options);
 					break;
 				}
 				case 'cookie':
