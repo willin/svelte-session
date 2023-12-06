@@ -14,6 +14,7 @@ Simple Session Storage Management for [Svlelte](https://svelte.dev/).
   - [Advanced Usage](#advanced-usage)
     - [Session API](#session-api)
     - [Cloudflare KV](#cloudflare-kv)
+    - [Custom Handler](#custom-handler)
     - [Typescript](#typescript)
     - [Create your own stragety](#create-your-own-stragety)
   - [赞助 Sponsor](#赞助-sponsor)
@@ -121,6 +122,54 @@ export const handle = handleSession({
 ```
 
 Checkout the docs for more details: <https://kit.svelte.dev/docs/adapter-cloudflare#bindings>
+
+### Custom Handler
+
+```ts
+export const handle = handleSession({
+		adapter: {
+		name: 'cookie',
+		options: {
+			chunk: true
+		}
+	},
+	session: {
+		key: '__sid',
+		secrets: ['s3cr3t']
+	},
+	cookie: {
+		path: '/',
+		sameSite: 'lax',
+		secure: true,
+		httpOnly: true
+	},
+	({ event, resolve }) => {
+		// event.locals is populated with the session `event.locals.session`
+		// Do anything you want here
+		return resolve(event);
+	}
+);
+```
+
+In case you're using [sequence()](https://kit.svelte.dev/docs/modules#sveltejs-kit-hooks-sequence), do this
+
+```ts
+const sessionHandler = handleSession({
+	adapter: {
+		name: 'cookie',
+		options: {
+			chunk: true
+		}
+	}
+});
+
+export const handle = sequence(sessionHandler, ({ resolve, event }) => {
+	// event.locals is populated with the session `event.locals.session`
+	// event.locals is also populated with all parsed cookies by handleSession, it would cause overhead to parse them again - `event.locals.cookies`.
+	// Do anything you want here
+	return resolve(event);
+});
+```
 
 ### Typescript
 
