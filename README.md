@@ -48,22 +48,22 @@ Init from `hooks.server.ts`:
 import { handleSession } from '@svelte-dev/session';
 
 export const handle = handleSession({
-	adapter: {
-		name: 'cookie',
-		options: {
-			chunk: true
-		}
-	},
-	session: {
-		key: '__sid',
-		secrets: ['s3cr3t']
-	},
-	cookie: {
-		path: '/',
-		sameSite: 'lax',
-		secure: true,
-		httpOnly: true
-	}
+  adapter: {
+    name: 'cookie',
+    options: {
+      chunk: true
+    }
+  },
+  session: {
+    key: '__sid',
+    secrets: ['s3cr3t']
+  },
+  cookie: {
+    path: '/',
+    sameSite: 'lax',
+    secure: true,
+    httpOnly: true
+  }
 });
 ```
 
@@ -73,9 +73,9 @@ Load Data from `+page.server.ts`:
 import type { ServerLoad } from '@sveltejs/kit';
 
 export const load: ServerLoad = async ({ locals }) => {
-	const views = locals.session.get('views') ?? 0;
-	await locals.session.set('views', views + 1);
-	return {};
+  const views = locals.session.get('views') ?? 0;
+  await locals.session.set('views', views + 1);
+  return {};
 };
 ```
 
@@ -83,7 +83,7 @@ Use in `svelte5` runes component:
 
 ```svelte
 <script>
-	let { data } = $props();
+  let { data } = $props();
 </script>
 
 <pre>
@@ -105,18 +105,18 @@ Init from `hooks.server.ts`:
 import { handleSession } from '@svelte-dev/session';
 
 export const handle = handleSession({
-	adapter: {
-		name: 'cloudflare-kv',
-		options: {
-			namespace: 'SESSION'
-		}
-	},
-	session: {
-		secrets: ['s3cr3t']
-	},
-	cookie: {
-		path: '/'
-	}
+  adapter: {
+    name: 'cloudflare-kv',
+    options: {
+      namespace: 'SESSION'
+    }
+  },
+  session: {
+    secrets: ['s3cr3t']
+  },
+  cookie: {
+    path: '/'
+  }
 });
 ```
 
@@ -154,19 +154,19 @@ In case you're using [sequence()](https://kit.svelte.dev/docs/modules#sveltejs-k
 
 ```ts
 const sessionHandler = handleSession({
-	adapter: {
-		name: 'cookie',
-		options: {
-			chunk: true
-		}
-	}
+  adapter: {
+    name: 'cookie',
+    options: {
+      chunk: true
+    }
+  }
 });
 
 export const handle = sequence(sessionHandler, ({ resolve, event }) => {
-	// event.locals is populated with the session `event.locals.session`
-	// event.locals is also populated with all parsed cookies by handleSession, it would cause overhead to parse them again - `event.locals.cookies`.
-	// Do anything you want here
-	return resolve(event);
+  // event.locals is populated with the session `event.locals.session`
+  // event.locals is also populated with all parsed cookies by handleSession, it would cause overhead to parse them again - `event.locals.cookies`.
+  // Do anything you want here
+  return resolve(event);
 });
 ```
 
@@ -178,17 +178,17 @@ Here's a simple example, modify `app.d.ts`:
 import type { FlashSessionData, SessionData, SessionStorage } from '@svelte-dev/session';
 
 declare global {
-	namespace App {
-		// interface Error {}
-		interface Locals {
-			session: SessionStorage<{ views: number }>;
-		}
-		interface PageData {
-			session: FlashSessionData<SessionData, SessionData>;
-		}
-		interface Session extends SessionStorage {}
-		// interface Platform {}
-	}
+  namespace App {
+    // interface Error {}
+    interface Locals {
+      session: SessionStorage<{ views: number }>;
+    }
+    interface PageData {
+      session: FlashSessionData<SessionData, SessionData>;
+    }
+    interface Session extends SessionStorage {}
+    // interface Platform {}
+  }
 }
 ```
 
@@ -197,50 +197,50 @@ declare global {
 ```ts
 import type { RequestEvent } from '@sveltejs/kit';
 import type {
-	CookieOptions,
-	FlashSessionData,
-	SessionData,
-	SessionOptions,
-	SessionStorageStrategy
+  CookieOptions,
+  FlashSessionData,
+  SessionData,
+  SessionOptions,
+  SessionStorageStrategy
 } from '@svelte-dev/session';
 
 export type YourStrageOptions = {
-	/**
-	 * Example
-	 */
-	key?: string;
+  /**
+   * Example
+   */
+  key?: string;
 };
 
 export class YourStrategy<Data = SessionData, FlashData = Data>
-	implements SessionStorageStrategy<Data, FlashData>
+  implements SessionStorageStrategy<Data, FlashData>
 {
-	constructor(
-		event: RequestEvent,
-		options: YourStrageOptions & { cookie: CookieOptions; session: SessionOptions }
-	) {}
-	/**
-	 * Creates a new record with the given data and returns the session id.
-	 */
-	async createData(data, expires?: Date): Promise<string> {}
+  constructor(
+    event: RequestEvent,
+    options: YourStrageOptions & { cookie: CookieOptions; session: SessionOptions }
+  ) {}
+  /**
+   * Creates a new record with the given data and returns the session id.
+   */
+  async createData(data, expires?: Date): Promise<string> {}
 
-	/**
-	 * Returns data for a given session id, or `null` if there isn't any.
-	 */
-	async readData(id: string): Promise<FlashSessionData<Data, FlashData> | null> {}
+  /**
+   * Returns data for a given session id, or `null` if there isn't any.
+   */
+  async readData(id: string): Promise<FlashSessionData<Data, FlashData> | null> {}
 
-	/**
-	 * Updates data for the given session id.
-	 */
-	async updateData(
-		id: string,
-		data: FlashSessionData<Data, FlashData>,
-		expires?: Date
-	): Promise<void> {}
+  /**
+   * Updates data for the given session id.
+   */
+  async updateData(
+    id: string,
+    data: FlashSessionData<Data, FlashData>,
+    expires?: Date
+  ): Promise<void> {}
 
-	/**
-	 * Deletes data for a given session id from the data store.
-	 */
-	async deleteData(id: string): Promise<void> {}
+  /**
+   * Deletes data for a given session id from the data store.
+   */
+  async deleteData(id: string): Promise<void> {}
 }
 ```
 
